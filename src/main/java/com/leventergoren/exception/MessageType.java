@@ -12,6 +12,7 @@ public enum MessageType {
     USERNAME_OR_PASSWORD_WRONG("1005", "Kullanıcı adı veya şifre hatalı"),
     EMAIL_ALREADY_USING("1006", "Bu email zaten kullanılıyor"),
     REGISTER_EXCEPTION("1007", "Kayıt esnasında bir sorun oluştu"),
+    TOKEN_IS_EXPIRED("1008", "Tokenın süresi dolmuştur"),
     GENERAL_EXCEPTION("9999", "Genel bir sorun ortaya çıktı.");
 
     private String code;

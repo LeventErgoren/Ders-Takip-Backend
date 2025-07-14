@@ -48,6 +48,10 @@ public class JwtService {
         return claimsFunction.apply(claims);
     }
 
+    public String getIdByToken(String token) {
+        return exportToken(token, Claims::getId);
+    }
+
     public String getUserNameByToken(String token) {
         return exportToken(token, Claims::getSubject);
     }

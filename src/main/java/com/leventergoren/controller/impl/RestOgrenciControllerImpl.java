@@ -20,7 +20,7 @@ public class RestOgrenciControllerImpl implements IRestOgrenciController {
     @GetMapping("/get/{id}")
     @PreAuthorize("#id == principal.id")
     @Override
-    public DtoOgrenci getOgrenci(@PathVariable(value = "id") Long id) {
+    public DtoOgrenci getOgrenci(@PathVariable(value = "id",required = true) Long id) {
         return ogrenciService.getOgrenci(id);
     }
 }

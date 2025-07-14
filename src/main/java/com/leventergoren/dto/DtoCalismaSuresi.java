@@ -5,22 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DtoOgrenci {
+public class DtoCalismaSuresi {
 
-    private Long id;
+    private int dakika;
 
-    private String firstname;
-
-    private String lastname;
-
-    private String email;
-
-    private Date creationDate;
+    private LocalDate creationDate;
 
 }

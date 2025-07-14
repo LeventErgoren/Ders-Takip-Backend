@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -23,7 +24,7 @@ public class CalismaSuresi {
     private int dakika;
 
     @Column
-    private Date creationDate;
+    private LocalDate creationDate;
 
     @ManyToOne
     private Ogrenci ogrenci;
