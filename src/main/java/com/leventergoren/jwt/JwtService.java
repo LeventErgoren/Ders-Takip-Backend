@@ -1,15 +1,25 @@
 package com.leventergoren.jwt;
 
+import com.leventergoren.exception.BaseException;
+import com.leventergoren.exception.ErrorMessage;
+import com.leventergoren.exception.MessageType;
+import com.leventergoren.model.Kullanici;
+import com.leventergoren.model.Ogrenci;
+import com.leventergoren.repository.OgrenciRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Component
@@ -17,10 +27,14 @@ public class JwtService {
 
     private static final String SECRET_KEY = "Baap98ClhCr7WHAo241evCFTLklc/l0iQoLfXhBxRNk=";
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(Kullanici userDetails) {
+
+        Map<String, Object> claimsMap = new HashMap<>();
+        claimsMap.put("id", userDetails.getId());
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .addClaims(claimsMap)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
