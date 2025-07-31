@@ -48,15 +48,15 @@ public class RestCalismaSuresiControllerImpl implements IRestCalismaSuresiContro
     @PreAuthorize("#id == principal.id")
     @PostMapping("/add-calisma-suresi/{id}")
     @Override
-    public DtoCalismaSuresi addCalismaSuresi(@PathVariable(required = true) Long id, @RequestParam(required = true) int dakika) {
-        return calismaSuresiService.addCalismaSuresi(id, dakika);
+    public DtoCalismaSuresi addCalismaSuresi(@PathVariable(required = true) Long id, @RequestParam(required = true) int dakika, HttpServletRequest httpServletRequest) {
+        return calismaSuresiService.addCalismaSuresi(id, dakika,httpServletRequest.getRemoteAddr());
     }
 
     @PreAuthorize("#id == principal.id")
     @PostMapping("/add-calisma-suresi-time/{id}")
     @Override
-    public DtoCalismaSuresi addCalismaSuresiWithTime(@PathVariable(value = "id") Long id, @RequestParam(required = true) int dakika, @RequestParam LocalDate date) {
-        return calismaSuresiService.addCalismaSuresiWithTime(id, dakika, date);
+    public DtoCalismaSuresi addCalismaSuresiWithTime(@PathVariable(value = "id") Long id, @RequestParam(required = true) int dakika, @RequestParam LocalDate date, HttpServletRequest httpServletRequest) {
+        return calismaSuresiService.addCalismaSuresiWithTime(id, dakika, date, httpServletRequest.getRemoteAddr());
     }
 
     @Override

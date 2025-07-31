@@ -9,9 +9,9 @@ import com.leventergoren.jwt.RefreshTokenRequest;
 
 public interface IAuthService {
 
-    DtoOgrenci register(RegisterRequest request);
+    DtoOgrenci register(RegisterRequest request, String ipAddress);
 
-    AuthResponse authenticate(AuthRequest request);
+    AuthResponse authenticate(AuthRequest request, String ipAddress);
 
     AuthResponse refreshToken(RefreshTokenRequest request);
 }

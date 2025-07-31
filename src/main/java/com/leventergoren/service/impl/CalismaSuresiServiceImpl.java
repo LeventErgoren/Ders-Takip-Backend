@@ -5,11 +5,10 @@ import com.leventergoren.dto.PageableCalismaSuresiRequest;
 import com.leventergoren.exception.BaseException;
 import com.leventergoren.exception.ErrorMessage;
 import com.leventergoren.exception.MessageType;
-import com.leventergoren.model.CalismaSuresi;
-import com.leventergoren.model.Ogrenci;
-import com.leventergoren.model.ZamanAraligi;
+import com.leventergoren.model.*;
 import com.leventergoren.repository.CalismaSuresiRepository;
 import com.leventergoren.repository.OgrenciRepository;
+import com.leventergoren.repository.UserRepository;
 import com.leventergoren.service.ICalismaSuresiService;
 import com.leventergoren.utils.RestPageableEntity;
 import jakarta.transaction.Transactional;
@@ -26,13 +25,16 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Service
-public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
+public class CalismaSuresiServiceImpl extends LoggerService implements ICalismaSuresiService {
 
     @Autowired
     private CalismaSuresiRepository calismaSuresiRepository;
 
     @Autowired
     private OgrenciRepository ogrenciRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     public RestPageableEntity<DtoCalismaSuresi> findPageableCalismaSuresi(PageableCalismaSuresiRequest pageable) {
@@ -51,8 +53,8 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
 
 
     @Override
-    public DtoCalismaSuresi addCalismaSuresiWithTime(Long id, int dakika, LocalDate date) {
-        return addCalisma(id, dakika, date);
+    public DtoCalismaSuresi addCalismaSuresiWithTime(Long id, int dakika, LocalDate date, String ipAddress) {
+        return addCalisma(id, dakika, date, ipAddress, Action.ADD_CALISMA_SURESİ_WITH_TIME);
     }
 
     private List<DtoCalismaSuresi> getDtoCalismaSuresiPageable(Page<CalismaSuresi> calismaSuresiPage) {
@@ -85,8 +87,8 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
     }
 
     @Override
-    public DtoCalismaSuresi addCalismaSuresi(Long id, int dakika) {
-        return addCalisma(id, dakika, null);
+    public DtoCalismaSuresi addCalismaSuresi(Long id, int dakika, String ipAddress) {
+        return addCalisma(id, dakika, null, ipAddress, Action.ADD_CALISMA_SURESİ);
     }
 
     @Override
@@ -123,7 +125,7 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
     }
 
     @Transactional
-    private DtoCalismaSuresi addCalisma(Long id, int dakika, LocalDate date) {
+    private DtoCalismaSuresi addCalisma(Long id, int dakika, LocalDate date, String ipAddress, Action action) {
         if (dakika < 1) {
             throw new BaseException(new ErrorMessage(MessageType.TIME_CANT_UNDER, MessageType.TIME_CANT_UNDER.getMessage()));
         }
@@ -157,6 +159,8 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
         DtoCalismaSuresi dtoCalismaSuresi = new DtoCalismaSuresi();
         BeanUtils.copyProperties(dbCalismaSuresi, dtoCalismaSuresi);
 
+        Optional<Kullanici> k = userRepository.findById(id);
+        log(k.get().getUsername(), action, ipAddress);
         return dtoCalismaSuresi;
     }
 

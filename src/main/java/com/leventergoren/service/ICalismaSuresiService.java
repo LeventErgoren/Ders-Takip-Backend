@@ -14,11 +14,12 @@ public interface ICalismaSuresiService {
 
     List<DtoCalismaSuresi> getCalismaSuresi(Long id);
 
-    DtoCalismaSuresi addCalismaSuresi(Long id, int dakika);
+    DtoCalismaSuresi addCalismaSuresi(Long id, int dakika, String ipAddress);
+
+    DtoCalismaSuresi addCalismaSuresiWithTime(Long id, int dakika, LocalDate date, String ipAddress);
 
     List<DtoCalismaSuresi> getCalismaSuresiWithTime(Long id, ZamanAraligi aralik);
 
     RestPageableEntity<DtoCalismaSuresi> findPageableCalismaSuresi(PageableCalismaSuresiRequest pageable);
 
-    DtoCalismaSuresi addCalismaSuresiWithTime(Long id, int dakika, LocalDate date);
 }

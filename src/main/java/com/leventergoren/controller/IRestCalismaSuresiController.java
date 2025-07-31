@@ -15,9 +15,9 @@ public interface IRestCalismaSuresiController {
 
     List<DtoCalismaSuresi> getCalismaSuresiWithTime(Long id, ZamanAraligi aralik);
 
-    DtoCalismaSuresi addCalismaSuresi(Long id, int dakika);
+    DtoCalismaSuresi addCalismaSuresi(Long id, int dakika, HttpServletRequest httpServletRequest);
 
-    DtoCalismaSuresi addCalismaSuresiWithTime(Long id, int dakika, LocalDate date);
+    DtoCalismaSuresi addCalismaSuresiWithTime(Long id, int dakika, LocalDate date, HttpServletRequest httpServletRequest);
 
     RestPageableEntity<DtoCalismaSuresi> findPageableCalismaSuresi(PageableCalismaSuresiRequest pageable,
                                                                    HttpServletRequest request);

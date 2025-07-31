@@ -10,6 +10,7 @@ import com.leventergoren.dto.AuthRequest;
 import com.leventergoren.jwt.AuthResponse;
 import com.leventergoren.jwt.JwtService;
 import com.leventergoren.jwt.RefreshTokenRequest;
+import com.leventergoren.model.Action;
 import com.leventergoren.model.Kullanici;
 import com.leventergoren.model.Ogrenci;
 import com.leventergoren.model.RefreshToken;
@@ -34,7 +35,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class AuthServiceImpl implements IAuthService {
+public class AuthServiceImpl extends LoggerService implements IAuthService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -55,7 +56,7 @@ public class AuthServiceImpl implements IAuthService {
     private OgrenciRepository ogrenciRepository;
 
     @Override
-    public DtoOgrenci register(RegisterRequest request) {
+    public DtoOgrenci register(RegisterRequest request, String ipAddress) {
         try {
             Kullanici kullanici = new Kullanici();
             request.setUsername(request.getUsername().trim());
@@ -77,6 +78,7 @@ public class AuthServiceImpl implements IAuthService {
             DtoOgrenci dtoOgrenci = new DtoOgrenci();
             BeanUtils.copyProperties(dbOgrenci, dtoOgrenci);
 
+            log(request.getUsername(), Action.REGISTER, ipAddress);
             return dtoOgrenci;
         } catch (Exception ex) {
 
@@ -94,7 +96,7 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     @Transactional
-    public AuthResponse authenticate(AuthRequest request) {
+    public AuthResponse authenticate(AuthRequest request, String ipAddress) {
 
         try {
             request.setUsername(request.getUsername().trim());
@@ -108,6 +110,7 @@ public class AuthServiceImpl implements IAuthService {
             RefreshToken refreshToken = createRefreshToken(optional.get());
             refreshTokenRepository.save(refreshToken);
 
+            log(request.getUsername(), Action.LOGIN, ipAddress);
             return new AuthResponse(accessToken, refreshToken.getRefreshToken());
 
         } catch (Exception e) {
@@ -143,7 +146,7 @@ public class AuthServiceImpl implements IAuthService {
     private RefreshToken createRefreshToken(Kullanici user) {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setRefreshToken(UUID.randomUUID().toString());
-        refreshToken.setExpireDate(new Date(System.currentTimeMillis() + 1000 * 60 *60));
+        refreshToken.setExpireDate(new Date(System.currentTimeMillis() + 1000 * 60 * 60));
         refreshToken.setUser(user);
 
         return refreshToken;

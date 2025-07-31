@@ -7,6 +7,8 @@ import com.leventergoren.dto.RegisterRequest;
 import com.leventergoren.jwt.AuthResponse;
 import com.leventergoren.jwt.RefreshTokenRequest;
 import com.leventergoren.service.IAuthService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,14 +23,14 @@ public class RestAuthControllerImpl implements IRestAuthController {
 
     @PostMapping("/register")
     @Override
-    public DtoOgrenci register(@Valid @RequestBody RegisterRequest request) {
-        return iAuthService.register(request);
+    public DtoOgrenci register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpServletRequest) {
+        return iAuthService.register(request, httpServletRequest.getRemoteAddr());
     }
 
     @PostMapping("/authenticate")
     @Override
-    public AuthResponse authenticate(@Valid @RequestBody AuthRequest request) {
-        return iAuthService.authenticate(request);
+    public AuthResponse authenticate(@Valid @RequestBody AuthRequest request,HttpServletRequest httpServletRequest) {
+        return iAuthService.authenticate(request,httpServletRequest.getRemoteAddr());
     }
 
     @PostMapping("/refreshToken")
