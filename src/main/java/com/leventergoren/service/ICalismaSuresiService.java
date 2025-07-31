@@ -7,6 +7,7 @@ import com.leventergoren.model.ZamanAraligi;
 import com.leventergoren.utils.RestPageableEntity;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ICalismaSuresiService {
@@ -18,4 +19,6 @@ public interface ICalismaSuresiService {
     List<DtoCalismaSuresi> getCalismaSuresiWithTime(Long id, ZamanAraligi aralik);
 
     RestPageableEntity<DtoCalismaSuresi> findPageableCalismaSuresi(PageableCalismaSuresiRequest pageable);
+
+    DtoCalismaSuresi addCalismaSuresiWithTime(Long id, int dakika, LocalDate date);
 }

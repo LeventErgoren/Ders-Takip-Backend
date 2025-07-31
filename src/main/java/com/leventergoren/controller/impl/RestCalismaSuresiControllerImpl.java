@@ -3,6 +3,9 @@ package com.leventergoren.controller.impl;
 import com.leventergoren.controller.IRestCalismaSuresiController;
 import com.leventergoren.dto.DtoCalismaSuresi;
 import com.leventergoren.dto.PageableCalismaSuresiRequest;
+import com.leventergoren.exception.BaseException;
+import com.leventergoren.exception.ErrorMessage;
+import com.leventergoren.exception.MessageType;
 import com.leventergoren.jwt.JwtService;
 import com.leventergoren.model.ZamanAraligi;
 import com.leventergoren.service.ICalismaSuresiService;
@@ -15,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -46,6 +50,13 @@ public class RestCalismaSuresiControllerImpl implements IRestCalismaSuresiContro
     @Override
     public DtoCalismaSuresi addCalismaSuresi(@PathVariable(required = true) Long id, @RequestParam(required = true) int dakika) {
         return calismaSuresiService.addCalismaSuresi(id, dakika);
+    }
+
+    @PreAuthorize("#id == principal.id")
+    @PostMapping("/add-calisma-suresi-time/{id}")
+    @Override
+    public DtoCalismaSuresi addCalismaSuresiWithTime(@PathVariable(value = "id") Long id, @RequestParam(required = true) int dakika, @RequestParam LocalDate date) {
+        return calismaSuresiService.addCalismaSuresiWithTime(id, dakika, date);
     }
 
     @Override

@@ -13,6 +13,9 @@ public enum MessageType {
     EMAIL_ALREADY_USING("1006", "Bu email zaten kullanılıyor"),
     REGISTER_EXCEPTION("1007", "Kayıt esnasında bir sorun oluştu"),
     TOKEN_IS_EXPIRED("1008", "Tokenın süresi dolmuştur"),
+    TIME_CANT_UNDER("1009", "Eklenecek zaman 1'in altında olamaz"),
+    TIME_CANT_UPPER("1010", "Eklenecek zaman 1000'in üzerinde olamaz"),
+    DATE_CANT_UPPER("1011", "Eklenecek tarih şimdiden sonra olamaz"),
     GENERAL_EXCEPTION("9999", "Genel bir sorun ortaya çıktı.");
 
     private String code;

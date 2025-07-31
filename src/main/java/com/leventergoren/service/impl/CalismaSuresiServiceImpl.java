@@ -12,6 +12,7 @@ import com.leventergoren.repository.CalismaSuresiRepository;
 import com.leventergoren.repository.OgrenciRepository;
 import com.leventergoren.service.ICalismaSuresiService;
 import com.leventergoren.utils.RestPageableEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
     @Autowired
     private OgrenciRepository ogrenciRepository;
 
+    @Transactional
     public RestPageableEntity<DtoCalismaSuresi> findPageableCalismaSuresi(PageableCalismaSuresiRequest pageable) {
         Sort.Direction direction = pageable.getSort().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable1 = PageRequest.of(pageable.getPage(), 10, Sort.by(direction, "creationDate"));
@@ -45,6 +47,12 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
         pageableEntity.setTotalElement(page.getTotalElements());
 
         return pageableEntity;
+    }
+
+
+    @Override
+    public DtoCalismaSuresi addCalismaSuresiWithTime(Long id, int dakika, LocalDate date) {
+        return addCalisma(id, dakika, date);
     }
 
     private List<DtoCalismaSuresi> getDtoCalismaSuresiPageable(Page<CalismaSuresi> calismaSuresiPage) {
@@ -61,6 +69,7 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
     }
 
     @Override
+    @Transactional
     public List<DtoCalismaSuresi> getCalismaSuresi(Long id) {
 
         List<CalismaSuresi> calismaSureleri = calismaSuresiRepository.findByOgrenci_Id(id);
@@ -77,27 +86,11 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
 
     @Override
     public DtoCalismaSuresi addCalismaSuresi(Long id, int dakika) {
-
-        Optional<Ogrenci> optional = ogrenciRepository.findById(id);
-
-        if (optional.isEmpty()) {
-            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST, ""));
-        }
-
-        CalismaSuresi calismaSuresi = new CalismaSuresi();
-        calismaSuresi.setCreationDate(LocalDate.now());
-        calismaSuresi.setDakika(dakika);
-        calismaSuresi.setOgrenci(optional.get());
-
-        CalismaSuresi dbCalismaSuresi = calismaSuresiRepository.save(calismaSuresi);
-
-        DtoCalismaSuresi dtoCalismaSuresi = new DtoCalismaSuresi();
-        BeanUtils.copyProperties(dbCalismaSuresi, dtoCalismaSuresi);
-
-        return dtoCalismaSuresi;
+        return addCalisma(id, dakika, null);
     }
 
     @Override
+    @Transactional
     public List<DtoCalismaSuresi> getCalismaSuresiWithTime(Long id, ZamanAraligi aralik) {
         LocalDate localDate = calculateStartDate(aralik);
         List<CalismaSuresi> calismaSuresiList = calismaSuresiRepository.findByOgrenciAndCreationDateAfter(id, localDate);
@@ -129,5 +122,42 @@ public class CalismaSuresiServiceImpl implements ICalismaSuresiService {
         }
     }
 
+    @Transactional
+    private DtoCalismaSuresi addCalisma(Long id, int dakika, LocalDate date) {
+        if (dakika < 1) {
+            throw new BaseException(new ErrorMessage(MessageType.TIME_CANT_UNDER, MessageType.TIME_CANT_UNDER.getMessage()));
+        }
+        if (dakika > 1000) {
+            throw new BaseException(new ErrorMessage(MessageType.TIME_CANT_UPPER, MessageType.TIME_CANT_UPPER.getMessage()));
+        }
+
+        if (date != null) {
+            boolean after = date.isAfter(LocalDate.now());
+            if (after) {
+                System.out.println(LocalDate.now());
+                throw new BaseException(new ErrorMessage(MessageType.DATE_CANT_UPPER, "Eklenecek tarih şimdiden sonra olamaz"));
+            }
+        }
+
+        Optional<Ogrenci> optional = ogrenciRepository.findById(id);
+
+        if (optional.isEmpty()) {
+            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST, ""));
+        }
+
+        LocalDate tarih = date != null ? date : LocalDate.now();
+
+        CalismaSuresi calismaSuresi = new CalismaSuresi();
+        calismaSuresi.setCreationDate(tarih);
+        calismaSuresi.setDakika(dakika);
+        calismaSuresi.setOgrenci(optional.get());
+
+        CalismaSuresi dbCalismaSuresi = calismaSuresiRepository.save(calismaSuresi);
+
+        DtoCalismaSuresi dtoCalismaSuresi = new DtoCalismaSuresi();
+        BeanUtils.copyProperties(dbCalismaSuresi, dtoCalismaSuresi);
+
+        return dtoCalismaSuresi;
+    }
 
 }

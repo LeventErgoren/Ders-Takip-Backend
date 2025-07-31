@@ -7,6 +7,7 @@ import com.leventergoren.exception.MessageType;
 import com.leventergoren.model.Ogrenci;
 import com.leventergoren.repository.OgrenciRepository;
 import com.leventergoren.service.IOgrenciService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

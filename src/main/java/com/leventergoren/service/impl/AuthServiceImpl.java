@@ -17,6 +17,7 @@ import com.leventergoren.repository.OgrenciRepository;
 import com.leventergoren.repository.RefreshTokenRepository;
 import com.leventergoren.repository.UserRepository;
 import com.leventergoren.service.IAuthService;
+import jakarta.transaction.Transactional;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.tool.schema.spi.SqlScriptException;
 import org.springframework.beans.BeanUtils;
@@ -77,20 +78,22 @@ public class AuthServiceImpl implements IAuthService {
             BeanUtils.copyProperties(dbOgrenci, dtoOgrenci);
 
             return dtoOgrenci;
-        } catch (DataIntegrityViolationException ex) {
+        } catch (Exception ex) {
 
             if (ex.getMessage().contains("username")) {
                 throw new BaseException(new ErrorMessage(MessageType.USERNAME_ALREADY_USING, "-> " + request.getUsername()));
-            } else {
+            } else if (ex.getMessage().contains("email")) {
                 throw new BaseException(new ErrorMessage(MessageType.EMAIL_ALREADY_USING, "-> " + request.getEmail()));
+            } else {
+                throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION, "-> " + ex.getMessage()));
+
             }
 
-        } catch (Exception e) {
-            throw new BaseException(new ErrorMessage(MessageType.REGISTER_EXCEPTION, ""));
         }
     }
 
     @Override
+    @Transactional
     public AuthResponse authenticate(AuthRequest request) {
 
         try {
@@ -114,6 +117,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
+    @Transactional
     public AuthResponse refreshToken(RefreshTokenRequest request) {
         Optional<RefreshToken> optional = refreshTokenRepository.findByRefreshToken(request.getRefreshToken());
         if (optional.isEmpty()) {
@@ -139,7 +143,7 @@ public class AuthServiceImpl implements IAuthService {
     private RefreshToken createRefreshToken(Kullanici user) {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setRefreshToken(UUID.randomUUID().toString());
-        refreshToken.setExpireDate(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 168));
+        refreshToken.setExpireDate(new Date(System.currentTimeMillis() + 1000 * 60 *60));
         refreshToken.setUser(user);
 
         return refreshToken;
