@@ -29,8 +29,9 @@ public class RestAuthControllerImpl implements IRestAuthController {
 
     @PostMapping("/authenticate")
     @Override
-    public AuthResponse authenticate(@Valid @RequestBody AuthRequest request,HttpServletRequest httpServletRequest) {
-        return iAuthService.authenticate(request,httpServletRequest.getRemoteAddr());
+    public String authenticate(@Valid @RequestBody AuthRequest request,HttpServletRequest httpServletRequest) {
+        return "asdasdad";
+        // return iAuthService.authenticate(request,httpServletRequest.getRemoteAddr());
     }
 
     @PostMapping("/refreshToken")

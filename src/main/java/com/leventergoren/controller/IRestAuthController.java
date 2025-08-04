@@ -12,7 +12,7 @@ public interface IRestAuthController {
 
     DtoOgrenci register(RegisterRequest request, HttpServletRequest httpServletRequest);
 
-    AuthResponse authenticate(AuthRequest request, HttpServletRequest httpServletRequest);
+    String authenticate(AuthRequest request, HttpServletRequest httpServletRequest);
 
     AuthResponse refreshToken(RefreshTokenRequest refreshToken);
 
