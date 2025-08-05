@@ -1,6 +1,7 @@
 package com.leventergoren.controller.impl;
 
 import com.leventergoren.controller.IRestAuthController;
+import com.leventergoren.dto.DtoBakim;
 import com.leventergoren.dto.DtoOgrenci;
 import com.leventergoren.dto.AuthRequest;
 import com.leventergoren.dto.RegisterRequest;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,5 +39,11 @@ public class RestAuthControllerImpl implements IRestAuthController {
     @Override
     public AuthResponse refreshToken(@Valid @RequestBody RefreshTokenRequest refreshToken) {
         return iAuthService.refreshToken(refreshToken);
+    }
+
+    @GetMapping("/is-maintenance")
+    @Override
+    public DtoBakim isMaintenance() {
+        return iAuthService.isMaintenance();
     }
 }

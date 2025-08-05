@@ -21,6 +21,7 @@ public class SecurityConfig {
     private static final String AUTHENTICATE = "/authenticate";
     private static final String REGISTER = "/register";
     private static final String REFRESH_TOKEN = "/refreshToken";
+    private static final String IS_MAINTENANCE = "/is-maintenance";
 
     @Autowired
     private AuthenticationProvider authenticationProvider;
@@ -35,7 +36,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(AUTHENTICATE, REGISTER, REFRESH_TOKEN)
+                        .requestMatchers(AUTHENTICATE, REGISTER, REFRESH_TOKEN, IS_MAINTENANCE)
                         .permitAll()
                         .anyRequest()
                         .authenticated())

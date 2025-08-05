@@ -1,19 +1,14 @@
 package com.leventergoren.service.impl;
 
-import com.leventergoren.dto.DtoOgrenci;
-import com.leventergoren.dto.DtoUser;
-import com.leventergoren.dto.RegisterRequest;
+import com.leventergoren.dto.*;
 import com.leventergoren.exception.BaseException;
 import com.leventergoren.exception.ErrorMessage;
 import com.leventergoren.exception.MessageType;
-import com.leventergoren.dto.AuthRequest;
 import com.leventergoren.jwt.AuthResponse;
 import com.leventergoren.jwt.JwtService;
 import com.leventergoren.jwt.RefreshTokenRequest;
-import com.leventergoren.model.Action;
-import com.leventergoren.model.Kullanici;
-import com.leventergoren.model.Ogrenci;
-import com.leventergoren.model.RefreshToken;
+import com.leventergoren.model.*;
+import com.leventergoren.repository.BakimRepository;
 import com.leventergoren.repository.OgrenciRepository;
 import com.leventergoren.repository.RefreshTokenRepository;
 import com.leventergoren.repository.UserRepository;
@@ -36,6 +31,9 @@ import java.util.UUID;
 
 @Service
 public class AuthServiceImpl extends LoggerService implements IAuthService {
+
+    @Autowired
+    private BakimRepository bakimRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -137,6 +135,23 @@ public class AuthServiceImpl extends LoggerService implements IAuthService {
         RefreshToken savedRefreshToken = refreshTokenRepository.save(createRefreshToken(refreshToken.getUser()));
 
         return new AuthResponse(accessToken, savedRefreshToken.getRefreshToken());
+    }
+
+    @Override
+    public DtoBakim isMaintenance() {
+
+        Optional<Bakim> optional = bakimRepository.findById(1L);
+
+        if (optional.isEmpty()) {
+            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST, "Bakım bilgisi bulunamadı."));
+        }
+
+        Bakim bakim = optional.get();
+        DtoBakim dtoBakim = new DtoBakim();
+
+        BeanUtils.copyProperties(bakim, dtoBakim);
+
+        return dtoBakim;
     }
 
     private boolean isRefreshTokenExpired(Date expiredDate) {
